@@ -1,6 +1,6 @@
 import { DefaultBodyType, rest } from "msw";
 
-import { Location } from "./db";
+import { Location, locations } from "./db";
 
 interface LocationsResult {
   total_count: number;
@@ -18,10 +18,24 @@ export const handlers = [
   rest.get<DefaultBodyType, LocationsPathParams, LocationsResult>(
     "/locations",
     (req, res, ctx) => {
+      // console.log(req.url.searchParams.get("page"));
+      const locationName = req.url.searchParams.get("location_name") || "";
+      const robotId = req.url.searchParams.get("robot_id") || "";
+      const is_starred = req.url.searchParams.get("is_starred") || false;
+
+      // const starredIds: any[] = [];
+
+      console.log(locations, locationName, robotId, is_starred);
+      const resultLocations = locations.filter(
+        (val) =>
+          val.name.toLowerCase().includes(locationName.toLowerCase() || "") ||
+          val.robot?.id.toLowerCase().includes(robotId.toLowerCase() || "")
+      );
+
       // Please implement filtering feature here
       const result: LocationsResult = {
-        total_count: 0,
-        locations: [],
+        total_count: resultLocations.length,
+        locations: resultLocations,
       };
 
       return res(ctx.status(200), ctx.json(result));
@@ -48,7 +62,6 @@ export const handlers = [
         ctx.json({ error_msg: "Encountered unexpected error" })
       );
     }
-
     sessionStorage.setItem("starred_location_ids", JSON.stringify(req.body));
 
     return res(ctx.status(204));

@@ -1,58 +1,84 @@
-import {
-  Box,
-  Button,
-  Container,
-  FormControl,
-  Grid,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, IconButton, Link, Pagination, Typography } from "@mui/material";
 import React from "react";
-import SearchIcon from "@mui/icons-material/Search";
 // import logo from "./logo.svg";
 // import "./Main.css";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import PaginationItem from "@mui/material/PaginationItem";
 import {
   DataGrid,
   GridColDef,
   GridColumnHeaderParams,
   GridRenderCellParams,
+  gridPageCountSelector,
+  gridPageSelector,
+  useGridApiContext,
+  useGridSelector,
 } from "@mui/x-data-grid";
-import StarIcon from "@mui/icons-material/Star";
-import StarOutlineIcon from "@mui/icons-material/StarOutline";
-import RefreshIcon from "@mui/icons-material/Refresh";
 import StarButton from "./StarButton";
 
-/*
-{
-    id: 1,
-    name: "Salty restaurant",
-    robot: {
-      id: "fghij456",
-      is_online: false,
-    },
-  },
-  */
+function CustomPagination() {
+  const apiRef = useGridApiContext();
+  const page = useGridSelector(apiRef, gridPageSelector);
+  const pageCount = useGridSelector(apiRef, gridPageCountSelector);
 
-function RobotTable() {
+  return (
+    <Pagination
+      color="primary"
+      variant="outlined"
+      shape="rounded"
+      page={page + 1}
+      count={pageCount}
+      // @ts-expect-error
+      renderItem={(props2) => <PaginationItem {...props2} disableRipple />}
+      onChange={(event: React.ChangeEvent<unknown>, value: number) =>
+        apiRef.current.setPage(value - 1)
+      }
+    />
+  );
+}
+
+function RobotTable(props: any) {
+  const { list, starredList, onChangeStarred } = props;
+
+  const updateStarredList = (newList: string[]) => {
+    fetch("/starred_location_ids", {
+      method: "put",
+      body: JSON.stringify(newList),
+    })
+      .then(() => onChangeStarred())
+      .catch(() => {
+        alert("Could not star an item due to unexpected error");
+      });
+  };
+
   const columns: GridColDef[] = [
     {
-      field: "starred",
+      field: "isStarred",
       width: 150,
       renderHeader: (params: GridColumnHeaderParams) => (
         <IconButton
           size="small"
           style={{ marginLeft: 16 }}
           // tabIndex={params.hasFocus ? 0 : -1}
+          onClick={() => updateStarredList([])}
         >
           <RefreshIcon />
         </IconButton>
       ),
       renderCell: (params: GridRenderCellParams<any>) => (
-        <StarButton isActive={true} />
+        <StarButton
+          id={params.row.id}
+          isActive={params.value}
+          onClick={(id: string, shouldRemove: boolean) => {
+            if (shouldRemove) {
+              updateStarredList(
+                starredList.filter((item: string) => item !== id)
+              );
+            } else {
+              updateStarredList([...starredList, id]);
+            }
+          }}
+        />
       ),
     },
     {
@@ -75,41 +101,17 @@ function RobotTable() {
           {params.row?.robot?.id ? (
             <Typography>{params.value}</Typography>
           ) : (
-            <Typography>Add</Typography>
+            <Link href="#">Add</Link>
           )}
         </Box>
       ),
     },
   ];
 
-  const rows = [
-    {
-      id: 0,
-      name: "Spicy restaurant",
-      robot: {
-        id: "abcde123",
-        is_online: true,
-      },
-    },
-    {
-      id: 1,
-      name: "Salty restaurant",
-      robot: {
-        id: "fghij456",
-        is_online: false,
-      },
-    },
-    {
-      id: 2,
-      name: "Salty restaurant",
-      robot: undefined,
-    },
-  ];
-
   return (
     <Box sx={{ height: 400, width: "100%" }}>
       <DataGrid
-        rows={rows}
+        rows={list}
         columns={columns}
         initialState={{
           pagination: {
@@ -121,6 +123,13 @@ function RobotTable() {
         pageSizeOptions={[6]}
         checkboxSelection
         disableRowSelectionOnClick
+        disableColumnSelector
+        disableColumnSorting
+        disableColumnMenu
+        disableColumnFilter
+        slots={{
+          pagination: CustomPagination,
+        }}
       />
     </Box>
   );

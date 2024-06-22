@@ -1,8 +1,8 @@
-import React from "react";
-import logo from "./logo.svg";
+import { ThemeProvider, createTheme } from "@mui/material";
 import "./App.css";
 import MainPage from "./components/MainPage";
-import { ThemeProvider, createTheme } from "@mui/material";
+
+import { worker } from "./mocks/browser";
 
 const theme = createTheme({
   palette: {
@@ -28,6 +28,7 @@ const theme = createTheme({
 });
 
 function App() {
+  worker.start();
   return (
     <ThemeProvider theme={theme}>
       <MainPage />
