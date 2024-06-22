@@ -2,6 +2,8 @@ import { Box, IconButton, Link, Pagination, Typography } from "@mui/material";
 import React from "react";
 // import logo from "./logo.svg";
 // import "./Main.css";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import CircleIcon from "@mui/icons-material/Circle";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import PaginationItem from "@mui/material/PaginationItem";
 import {
@@ -24,8 +26,7 @@ function CustomPagination() {
   return (
     <Pagination
       color="primary"
-      variant="outlined"
-      shape="rounded"
+      shape="circular"
       page={page + 1}
       count={pageCount}
       // @ts-expect-error
@@ -54,14 +55,9 @@ function RobotTable(props: any) {
   const columns: GridColDef[] = [
     {
       field: "isStarred",
-      width: 150,
+      width: 60,
       renderHeader: (params: GridColumnHeaderParams) => (
-        <IconButton
-          size="small"
-          style={{ marginLeft: 16 }}
-          // tabIndex={params.hasFocus ? 0 : -1}
-          onClick={() => updateStarredList([])}
-        >
+        <IconButton onClick={() => updateStarredList([])}>
           <RefreshIcon />
         </IconButton>
       ),
@@ -84,24 +80,55 @@ function RobotTable(props: any) {
     {
       field: "name",
       headerName: "Location",
-      width: 150,
+      width: 400,
       renderCell: (params: GridRenderCellParams<any>) => (
-        <Typography>{params.row.name}</Typography>
+        <Box
+          width={"100%"}
+          height={"calc(100% - 16px)"}
+          color={"white"}
+          bgcolor={params.row.robot?.is_online ? "#0091FF" : "#E4E4E4"}
+          position={"relative"}
+          display={"flex"}
+          margin={"8px"}
+          borderRadius={"7px"}
+          alignItems={"center"}
+          justifyContent={"center"}
+        >
+          <Typography>{params.row.name}</Typography>
+          <ChevronRightIcon sx={{ position: "absolute", right: "8px" }} />
+        </Box>
       ),
     },
     {
       field: "robot",
-      headerName: "Robot",
-      width: 110,
+      headerName: "Robots",
+      width: 240,
       valueGetter: (value, row) => {
         return `${row?.robot?.id}`;
       },
       renderCell: (params: GridRenderCellParams<any>) => (
-        <Box>
+        <Box
+          justifyContent={"start"}
+          height={"100%"}
+          display={"flex"}
+          alignItems={"center"}
+          width={"100%"}
+          flexDirection={"row"}
+        >
+          <CircleIcon
+            sx={{
+              color: params.row?.robot?.id ? "#00D15E" : "#E4E4E4",
+              marginRight: "16px",
+            }}
+          />
           {params.row?.robot?.id ? (
-            <Typography>{params.value}</Typography>
+            <Typography variant="body1" fontWeight={"bold"}>
+              {params.value}
+            </Typography>
           ) : (
-            <Link href="#">Add</Link>
+            <Link variant="body1" href="#">
+              Add
+            </Link>
           )}
         </Box>
       ),
@@ -109,8 +136,13 @@ function RobotTable(props: any) {
   ];
 
   return (
-    <Box sx={{ height: 400, width: "100%" }}>
+    <Box sx={{ height: 450, width: "100%" }}>
       <DataGrid
+        sx={{
+          ".MuiDataGrid-footerContainer": {
+            justifyContent: "center",
+          },
+        }}
         rows={list}
         columns={columns}
         initialState={{

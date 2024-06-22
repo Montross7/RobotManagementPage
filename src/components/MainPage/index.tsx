@@ -1,14 +1,13 @@
 import SearchIcon from "@mui/icons-material/Search";
 import StarIcon from "@mui/icons-material/Star";
 import {
-  Box,
-  Container,
-  FormControl,
-  InputAdornment,
-  MenuItem,
-  OutlinedInput,
-  Select,
-  Typography,
+    Box,
+    FormControl,
+    InputAdornment,
+    MenuItem,
+    OutlinedInput,
+    Select,
+    Typography
 } from "@mui/material";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import RobotTable from "../RobotTable";
@@ -32,8 +31,6 @@ function MainPage() {
     fetch("/starred_location_ids")
       .then((res) => res.json())
       .then((val) => {
-        console.log(val);
-
         setStarredList(JSON.parse(val.location_ids));
       });
   }, []);
@@ -60,11 +57,30 @@ function MainPage() {
   }, [locationList, starredList, selectOption]);
 
   return (
-    <Box>
-      <Typography variant="h5">Your Fleet</Typography>
-      <Container>
-        <FormControl fullWidth>
+    <Box padding={"32px"}>
+      <Typography paddingBottom={"8px"} variant="h5">
+        Your Fleet
+      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "16px 0px",
+        }}
+      >
+        <FormControl sx={{ width: "220px" }}>
           <Select
+            sx={{
+              background: "#FAFAFA",
+              color: "#8E8E8E",
+              borderRadius: 2,
+              "& .MuiSelect-select": {
+                padding: "8px",
+              },
+            }}
+            margin="dense"
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             // value={age}
@@ -81,10 +97,13 @@ function MainPage() {
             </MenuItem>
           </Select>
         </FormControl>
-        <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
+        <FormControl sx={{ width: "240px" }} variant="outlined">
           <OutlinedInput
+            sx={{ background: "#FAFAFA", color: "#8E8E8E", borderRadius: 2 }}
+            inputProps={{ style: { padding: "8px" } }}
             id="outlined-adornment-password"
             placeholder="Search robot or location"
+            margin="dense"
             endAdornment={
               <InputAdornment position="end">
                 <SearchIcon />
@@ -93,7 +112,7 @@ function MainPage() {
             onChange={(val) => handleInput(val.target.value)}
           />
         </FormControl>
-      </Container>
+      </Box>
       <RobotTable
         list={filteredList}
         starredList={starredList}
