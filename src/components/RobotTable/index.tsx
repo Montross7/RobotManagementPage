@@ -1,4 +1,11 @@
-import { Box, IconButton, Link, Pagination, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  Link,
+  Pagination,
+  Typography,
+} from "@mui/material";
 import React from "react";
 // import logo from "./logo.svg";
 // import "./Main.css";
@@ -82,21 +89,23 @@ function RobotTable(props: any) {
       headerName: "Location",
       width: 400,
       renderCell: (params: GridRenderCellParams<any>) => (
-        <Box
-          width={"100%"}
-          height={"calc(100% - 16px)"}
-          color={"white"}
-          bgcolor={params.row.robot?.is_online ? "#0091FF" : "#E4E4E4"}
-          position={"relative"}
-          display={"flex"}
-          margin={"8px"}
-          borderRadius={"7px"}
-          alignItems={"center"}
-          justifyContent={"center"}
+        <Button
+          sx={{
+            width: "100%",
+            height: "calc(100% - 16px)",
+            color: "white",
+            bgcolor: params.row.robot?.is_online ? "#0091FF" : "#E4E4E4",
+            position: "relative",
+            display: "flex",
+            margin: "8px",
+            borderRadius: "7px",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         >
           <Typography>{params.row.name}</Typography>
           <ChevronRightIcon sx={{ position: "absolute", right: "8px" }} />
-        </Box>
+        </Button>
       ),
     },
     {
