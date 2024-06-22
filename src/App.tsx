@@ -1,25 +1,37 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
+import MainPage from "./components/MainPage";
+import { ThemeProvider, createTheme } from "@mui/material";
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#3961F8",
+      dark: "#133BD3",
+      light: "#B8DDFF",
+    },
+    secondary: {
+      main: "#0091FF",
+      dark: "#00457A",
+      light: "#D7EEFF",
+    },
+  },
+  typography: {
+    h5: {
+      fontWeight: 600,
+      fontSize: 24,
+      lineHeight: "32px",
+      letterSpacing: "0px",
+    },
+  },
+});
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <MainPage />
+    </ThemeProvider>
   );
 }
 
